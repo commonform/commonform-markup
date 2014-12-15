@@ -1,0 +1,2 @@
+- Topic branches forked from `development`
+- `npm run pre-commit` before `git commit`

@@ -1,0 +1,13 @@
+*.tgz
+.editorconfig
+.gitattributes
+.gitignore
+.jscsrc
+.jshintignore
+.jshintrc
+.npmignore
+.travis.yml
+CONTRIBUTING.md
+bower.json
+coverage/
+test/
