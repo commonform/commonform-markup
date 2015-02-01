@@ -6,7 +6,7 @@
   var commonformMarkup = function(commonform) {
     var exports = {
       name: moduleName,
-      version: '0.0.1'
+      version: '0.0.2'
     };
 
     // Utility Functions and Data
