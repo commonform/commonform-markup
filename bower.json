@@ -20,7 +20,7 @@
     "url": "https://github.com/commonform/commonform-markup.js.git"
   },
   "homepage": "https://github.com/commonform/commonform-markup.js",
-  "main": "commonform-markup.js",
+  "main": "source/commonform-markup.js",
   "ignore": [
     "**/.*",
     "CONTRIBUTING.md",
@@ -28,5 +28,8 @@
     "node_modules/",
     "package.json",
     "test/"
-  ]
+  ],
+  "dependencies": {
+    "commonform": "~0.0.10"
+  }
 }

@@ -1,11 +1,9 @@
 // commonform-markup.js
-// =============
+// ====================
 (function() {
-  'use strict';
-
   var moduleName = 'commonform-markup';
 
-  var commonform = function() {
+  var commonformMarkup = function(commonform) {
     var exports = {
       name: moduleName,
       version: '0.0.1'
@@ -17,17 +15,6 @@
     var isString = function(x) {
       return typeof x === 'string';
     };
-
-    var USE = 'use';
-    var DEFINITION = 'definition';
-    var REFERENCE = 'reference';
-    var INSERT = 'insert';
-
-    var SUBJECT_OBJECT_MAP = {};
-    SUBJECT_OBJECT_MAP[USE] = 'term';
-    SUBJECT_OBJECT_MAP[DEFINITION] = 'term';
-    SUBJECT_OBJECT_MAP[REFERENCE] = 'summary';
-    SUBJECT_OBJECT_MAP[INSERT] = 'field';
 
     (function() {
       // Regular expression string scanner
@@ -88,10 +75,10 @@
 
         var objectForMatch = (function() {
           var LEAD_CHAR_NOUN = {
-            '"': DEFINITION,
-            '<': USE,
-            '{': REFERENCE,
-            '[': INSERT
+            '"': 'definition',
+            '<': 'use',
+            '{': 'reference',
+            '[': 'field'
           };
 
           return function(match) {
@@ -117,28 +104,30 @@
             }
             content.push(objectForMatch(match));
           }
-          return { content: content };
+          return {content: content};
         };
       })();
     })();
 
     exports.toMarkup = (function() {
+      var MAPPINGS = [
+        ['use', ['<', '>']],
+        ['definition', ['""', '""']],
+        ['reference', ['{', '}']],
+        ['field', ['[', ']']]
+      ];
+
       var forObject = function(item) {
-        var key = Object.keys(item)[0];
-        var value = item[key];
-        switch (key) {
-          case USE: {
-            return '<' + value + '>';
-          } case DEFINITION: {
-            return '""' + value + '""';
-          } case INSERT: {
-            return '[' + value + ']';
-          } case REFERENCE: {
-            return '{' + value + '}';
-          } default: {
-            throw new Error('Invalid form content');
+        for (var i = 0; i < MAPPINGS.length ; i++) {
+          var mapping = MAPPINGS[i];
+          var key = mapping[0];
+          var predicate = commonform[key].bind(commonform);
+          if (predicate(item)) {
+            var chars = mapping[1];
+            return chars[0] + item[key] + chars[1];
           }
         }
+        throw new Error('Invalid form content' + JSON.stringify(item));
       };
 
       return function(form) {
@@ -160,15 +149,15 @@
 
   // Export for AMD, Node.js, or if all else fails, to a browser global.
 
-  /* globals define, module */
   /* istanbul ignore next */
   (function(root, factory) {
+    /* globals define, module */
     if (typeof define === 'function' && define.amd) {
-      define(moduleName, [], factory());
+      define(moduleName, ['commonform'], factory());
     } else if (typeof exports === 'object') {
-      module.exports = factory();
+      module.exports = factory(require('commonform'));
     } else {
-      root[moduleName] = factory();
+      root[moduleName] = factory(root.commonform);
     }
-  })(this, commonform);
+  })(this, commonformMarkup);
 })();

@@ -1,7 +1,19 @@
 {
-  "name": "commonform-markup",
-  "version": "0.0.1",
+  "author": {
+    "name": "Kyle E. Mitchell",
+    "email": "kyle@kemitchell.com",
+    "url": "http://kemitchell.com/"
+  },
   "description": "plain-text markup for Common Form forms",
+  "devDependencies": {
+    "chai": "^1.10.0",
+    "istanbul": "^0.3.5",
+    "jscs": "^1.8.1",
+    "jshint": "^2.5.10",
+    "mocha": "^2.0.1",
+    "semver": "^4.1.0"
+  },
+  "homepage": "https://github.com/commonform/commonform-markup.js",
   "keywords": [
     "contracts",
     "document assembly",
@@ -10,30 +22,21 @@
     "markup"
   ],
   "license": "Apache-2.0",
-  "main": "commonform-markup.js",
-  "author": {
-    "name": "Kyle E. Mitchell",
-    "email": "kyle@kemitchell.com",
-    "url": "http://kemitchell.com/"
-  },
+  "main": "source/commonform-markup.js",
+  "name": "commonform-markup",
   "repository": {
     "type": "git",
     "url": "https://github.com/commonform/commonform-markup.js.git"
   },
-  "homepage": "https://github.com/commonform/commonform-markup.js",
   "scripts": {
+    "coverage": "istanbul cover _mocha -- && istanbul check-coverage coverage/coverage.json",
+    "lint": "jshint source test && jscs source test",
     "pre-commit": "npm run lint && npm run coverage",
-    "lint": "jshint && jscs commonform-markup.js test/",
-    "coverage": "istanbul cover _mocha -- --recursive --require should && istanbul check-coverage coverage/coverage.json",
-    "test": "mocha --recursive --require should"
+    "test": "mocha",
+    "travis-ci": "npm run pre-commit"
   },
-  "devDependencies": {
-    "commonform": "*",
-    "istanbul": "^0.3.5",
-    "jscs": "^1.8.1",
-    "jshint": "^2.5.10",
-    "mocha": "^2.0.1",
-    "semver": "^4.1.0",
-    "should": "^4.3.1"
+  "version": "0.0.1",
+  "dependencies": {
+    "commonform": "0.0.10"
   }
 }
