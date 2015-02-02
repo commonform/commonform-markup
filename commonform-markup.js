@@ -228,31 +228,48 @@ exports.parseLines = function(input) {
 };
 
 exports.toMarkup = (function() {
-  var forObject = function(item) {
+  var forObject = function(item, depth) {
+    depth = depth || 0;
     var key = Object.keys(item)[0];
     var value = item[key];
+    var indent = indentation(depth);
     switch (key) {
       case 'use':
-        return '<' + value + '>';
+        return indent + '<' + value + '>';
       case 'definition':
-        return '""' + value + '""';
+        return indent + '""' + value + '""';
       case 'field':
-        return '[' + value + ']';
+        return indent + '[' + value + ']';
       case 'reference':
-        return '{' + value + '}';
+        return indent + '{' + value + '}';
       default:
         // TODO: Implement sub-form output
-        throw new Error('Invalid form content');
+        if (item.hasOwnProperty('summary')) {
+          return '\n' + indent +
+            (item.summary ?
+              (item.summary + (item.conspicuous ? ' !! ' : ' \\\\ ')) :
+              '') +
+            formToMarkup(item.form, depth + 1);
+        } else {
+          throw new Error('Invalid form content');
+        }
     }
   };
 
-  return function(form) {
-    return form.content.reduce(function(buffer, element) {
-      if (isString(element)) {
-        return buffer + element;
-      } else {
-        return buffer + forObject(element);
-      }
-    }, '');
+  var indentation = function(depth) {
+    return new Array((TAB_WIDTH * depth) + 1).join(' ');
   };
+
+  var formToMarkup = function formToMarkup(form, depth) {
+    depth = depth || 0;
+    return form.content.reduce(function(buffer, element) {
+        if (isString(element)) {
+          return buffer + element;
+        } else {
+          return buffer + forObject(element, depth);
+        }
+      }, '');
+  };
+
+  return formToMarkup;
 })();

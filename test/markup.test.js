@@ -82,19 +82,11 @@ describe('Markup', function() {
         }, {
           name: 'term uses',
           markup: 'This <Agreement> is a test',
-          content: [
-            'This ',
-            {use: 'Agreement'},
-            ' is a test'
-          ]
+          content: ['This ', {use: 'Agreement'}, ' is a test']
         }, {
           name: 'term definitions',
           markup: 'This ""Agreement"" is a test',
-          content: [
-            'This ',
-            {definition: 'Agreement'},
-            ' is a test'
-          ]
+          content: ['This ', {definition: 'Agreement'}, ' is a test']
         }, {
           name: 'cross references',
           markup: '{Indemnification} survives termination',
@@ -105,10 +97,7 @@ describe('Markup', function() {
         }, {
           name: 'fields',
           markup: '[Company] warrants',
-          content: [
-            {field: 'Company'},
-            ' warrants'
-          ]
+          content: [{field: 'Company'}, ' warrants']
         }
       ];
 
@@ -144,6 +133,30 @@ describe('Markup', function() {
           markup.toMarkup({content: [{invalid: 'input'}]});
         }).to.throw('Invalid form content');
       });
+    });
+  });
+
+  describe('nested sub-forms', function() {
+    var form = {
+      content: [
+        {
+          summary: 'First',
+          form: {content: ['A']}
+        }, {
+          summary: 'Second',
+          form: {
+            content: [{
+              summary: 'Third',
+              form: {content: ['A']}
+            }]
+          }
+        }
+      ]
+    };
+
+    it('round trips', function() {
+      expect(markup.parseLines(markup.toMarkup(form)))
+        .to.eql(form);
     });
   });
 });
