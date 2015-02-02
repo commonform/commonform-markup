@@ -32,14 +32,17 @@ Scanner.prototype.scan = function(re) {
 Scanner.prototype.scanUntil = function(re) {
   var match;
   var index = this.tail.search(re);
-  if (index === -1) {
-    match = this.tail;
-    this.tail = '';
-  } else if (index === 0) {
-    match = '';
-  } else {
-    match = this.tail.substring(0, index);
-    this.tail = this.tail.substring(index);
+  switch (index) {
+    case -1:
+      match = this.tail;
+      this.tail = '';
+      break;
+    case 0:
+      match = '';
+      break;
+    default:
+      match = this.tail.substring(0, index);
+      this.tail = this.tail.substring(index);
   }
   this.offset += match.length;
   return match;
@@ -47,7 +50,7 @@ Scanner.prototype.scanUntil = function(re) {
 
 var VALID_PROPERTY_CHARS = '[ !#-;=?-@A-Z\\^-`a-z|-~]';
 
-exports.parseMarkup = (function() {
+var parseMarkup = exports.parseMarkup = (function() {
   var TAG_RE = new RegExp(
     '<(' + VALID_PROPERTY_CHARS + '+)>|' +
     '""(' + VALID_PROPERTY_CHARS + '+)""|' +
@@ -98,22 +101,138 @@ exports.parseMarkup = (function() {
   };
 })();
 
+var lastSubForm = function(form) {
+  var content = form.content;
+  // Iterate the form's content in reverse. Return the first sub-form.
+  for (var i = content.length - 1; i >= 0; i--) {
+    var element = content[i];
+    if (element.hasOwnProperty('summary')) {
+      return element;
+    }
+  }
+  throw new Error('No such form');
+};
+
+// Return the last sub-form at the given depth.
+var lastAtDepth = function(context, depth) {
+  return depth === 0 ?
+    context.form.content :
+    lastAtDepth(lastSubForm(context.form), depth - 1);
+};
+
+var pushContent = function(destination, source) {
+  var length = destination.length;
+  if (
+    length > 0 &&
+    source.length > 0 &&
+    isString(destination[length - 1]) &&
+    isString(source[0])
+  ) {
+    destination[length - 1] = destination[length - 1] +
+      ' ' + source.shift();
+  }
+  source.forEach(function(element) {
+    destination.push(element);
+  });
+};
+
+var TAB_WIDTH = 4;
+var LINE_RE = /^( *)(.+)$/;
+var ALL_SPACE = /^\s*$/;
+var CONTIGUOUS_SPACE = / {2,}/g;
+
+exports.parseLines = function(input) {
+  return input.split('\n')
+
+    // Tokenize lines with indentation attributes, discarding blanks.
+    .reduce(function(tokens, line, number) {
+      number = number + 1;
+      if (ALL_SPACE.test(line)) {
+        return tokens;
+      } else {
+        var match = LINE_RE.exec(line);
+        var depth = Math.floor(match[1].length / TAB_WIDTH);
+        var string = match[2].replace(CONTIGUOUS_SPACE, ' ');
+
+        tokens.push({line: number, depth: depth, string: string});
+        return tokens;
+      }
+    }, [])
+
+    // Detect summaries and parse markup.
+    .map(function(element) {
+      var string = element.string;
+      delete element.string;
+      if (string.indexOf('\\\\') > -1) {
+        var split = string.split('\\\\');
+        if (split.length === 1) {
+          split.push('');
+        }
+        element.summary = split[0].trim();
+        element.form = parseMarkup(split[1].trim());
+      } else {
+        element.content = parseMarkup(string).content;
+      }
+      return element;
+    })
+
+    // Check indentation
+    .map(function(element, i, array) {
+      if (i === 0) {
+        if (element.depth > 0) {
+          throw new Error('Line 1 indented too far');
+        }
+      } else {
+        var last = array[i - 1];
+        if (element.depth > last.depth &&
+            element.depth - last.depth > 1) {
+          throw new Error('Line ' + element.line + ' indented too far');
+        }
+      }
+      return element;
+    })
+
+    // Build form objects
+    .reduce(function(form, element) {
+      var parent;
+      if (element.summary) {
+        parent = lastAtDepth(form, element.depth);
+        parent.push({summary: element.summary, form: element.form});
+      } else {
+        try {
+          parent = lastAtDepth(form, element.depth + 1);
+        } catch (e) {
+          if (element.depth === 0) {
+            parent = lastAtDepth(form, 0);
+          } else {
+            var line = element.line;
+            throw new Error('Line ' + line + ' missing summary');
+          }
+        }
+        pushContent(parent, element.content);
+      }
+      return form;
+    }, {form: {content: []}})
+
+    .form;
+};
+
 exports.toMarkup = (function() {
   var forObject = function(item) {
     var key = Object.keys(item)[0];
     var value = item[key];
     switch (key) {
-      case 'use': {
+      case 'use':
         return '<' + value + '>';
-      } case 'definition': {
+      case 'definition':
         return '""' + value + '""';
-      } case 'field': {
+      case 'field':
         return '[' + value + ']';
-      } case 'reference': {
+      case 'reference':
         return '{' + value + '}';
-      } default: {
+      default:
+        // TODO: Implement sub-form output
         throw new Error('Invalid form content');
-      }
     }
   };
 
