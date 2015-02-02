@@ -140,6 +140,7 @@ var TAB_WIDTH = 4;
 var LINE_RE = /^( *)(.+)$/;
 var ALL_SPACE = /^\s*$/;
 var CONTIGUOUS_SPACE = / {2,}/g;
+var SUMMARY_SEP = /(\\\\|\!\!)/;
 
 exports.parseLines = function(input) {
   return input.split('\n')
@@ -163,13 +164,15 @@ exports.parseLines = function(input) {
     .map(function(element) {
       var string = element.string;
       delete element.string;
-      if (string.indexOf('\\\\') > -1) {
-        var split = string.split('\\\\');
-        if (split.length === 1) {
-          split.push('');
+      var match = SUMMARY_SEP.exec(string);
+      if (match) {
+        var summary = string.slice(0, match.index);
+        var content = string.slice(match.index + match[1].length);
+        if (match[1] === '!!') {
+          element.conspicuous = 'true';
         }
-        element.summary = split[0].trim();
-        element.form = parseMarkup(split[1].trim());
+        element.summary = summary.trim();
+        element.form = parseMarkup(content.trim());
       } else {
         element.content = parseMarkup(string).content;
       }
@@ -197,7 +200,14 @@ exports.parseLines = function(input) {
       var parent;
       if (element.summary) {
         parent = lastAtDepth(form, element.depth);
-        parent.push({summary: element.summary, form: element.form});
+        var object = {
+          summary: element.summary,
+          form: element.form
+        };
+        if (element.conspicuous) {
+          object.form.conspicuous = 'true';
+        }
+        parent.push(object);
       } else {
         try {
           parent = lastAtDepth(form, element.depth + 1);

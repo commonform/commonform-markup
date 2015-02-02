@@ -127,7 +127,13 @@ describe('line parsing', function() {
     ].join('\n');
     expect(markup.parseLines(input))
       .to.eql({
-        conspicuous: 'true',
-        content: ['Text content continues on second line']});
+        content: [{
+          summary: 'Limitation of Liability',
+          form: {
+            conspicuous: 'true',
+            content: ['This is important']
+          }
+        }]
+      });
   });
 });
