@@ -1,5 +1,4 @@
 {
-  "esnext": true,
   "bitwise": true,
   "camelcase": true,
   "curly": true,
@@ -9,12 +8,12 @@
   "latedef": true,
   "newcap": true,
   "noarg": true,
+  "node": true,
   "quotmark": "single",
   "regexp": true,
+  "smarttabs": true,
+  "trailing": true,
   "undef": true,
   "unused": true,
-  "strict": true,
-  "trailing": true,
-  "smarttabs": true,
   "white": true
 }
