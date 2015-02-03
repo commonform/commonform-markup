@@ -18,6 +18,22 @@ describe('line parsing', function() {
       });
   });
 
+  it('ignores comment lines', function() {
+    var input = 'Warranties \\\\ <Vendor> warrants its <Services>\n' +
+      '  # This is a comment!';
+    expect(markup.parseLines(input))
+      .to.eql({
+        content: [{
+          summary: 'Warranties',
+          form: {
+            content: [
+              {use: 'Vendor'}, ' warrants its ', {use: 'Services'}
+            ]
+          }
+        }]
+      });
+  });
+
   it('parses a sub-form without a summary', function() {
     var input = '\\\\ <Vendor> warrants its <Services>';
     expect(markup.parseLines(input))

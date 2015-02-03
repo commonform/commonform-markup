@@ -141,6 +141,7 @@ var LINE_RE = /^( *)(.+)$/;
 var ALL_SPACE = /^\s*$/;
 var CONTIGUOUS_SPACE = / {2,}/g;
 var SUMMARY_SEP = /(\\\\|\!\!)/;
+var COMMENT = /^\s*#.*$/;
 
 exports.parseLines = function(input) {
   return input.split('\n')
@@ -148,7 +149,7 @@ exports.parseLines = function(input) {
     // Tokenize lines with indentation attributes, discarding blanks.
     .reduce(function(tokens, line, number) {
       number = number + 1;
-      if (ALL_SPACE.test(line)) {
+      if (ALL_SPACE.test(line) || COMMENT.test(line)) {
         return tokens;
       } else {
         var match = LINE_RE.exec(line);
