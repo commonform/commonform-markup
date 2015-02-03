@@ -18,6 +18,20 @@ describe('line parsing', function() {
       });
   });
 
+  it('parses a sub-form without a summary', function() {
+    var input = '\\\\ <Vendor> warrants its <Services>';
+    expect(markup.parseLines(input))
+      .to.eql({
+        content: [{
+          form: {
+            content: [
+              {use: 'Vendor'}, ' warrants its ', {use: 'Services'}
+            ]
+          }
+        }]
+      });
+  });
+
   it('concatenates subsequent content', function() {
     var input = [
       'Warranties \\\\ <Vendor> warrants its <Services>',

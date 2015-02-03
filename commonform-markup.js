@@ -106,7 +106,7 @@ var lastSubForm = function(form) {
   // Iterate the form's content in reverse. Return the first sub-form.
   for (var i = content.length - 1; i >= 0; i--) {
     var element = content[i];
-    if (element.hasOwnProperty('summary')) {
+    if (element.hasOwnProperty('form')) {
       return element;
     }
   }
@@ -171,7 +171,10 @@ exports.parseLines = function(input) {
         if (match[1] === '!!') {
           element.conspicuous = 'true';
         }
-        element.summary = summary.trim();
+        summary = summary.trim();
+        if (summary.trim().length > 0) {
+          element.summary = summary;
+        }
         element.form = parseMarkup(content.trim());
       } else {
         element.content = parseMarkup(string).content;
@@ -198,12 +201,14 @@ exports.parseLines = function(input) {
     // Build form objects
     .reduce(function(form, element) {
       var parent;
-      if (element.summary) {
+      if (element.hasOwnProperty('form')) {
         parent = lastAtDepth(form, element.depth);
         var object = {
-          summary: element.summary,
           form: element.form
         };
+        if (element.summary) {
+          object.summary = element.summary;
+        }
         if (element.conspicuous) {
           object.form.conspicuous = 'true';
         }
