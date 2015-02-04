@@ -4,6 +4,7 @@
 .istanbul.yml
 .jscsrc
 .jshintrc
+.npmignore
 coverage
 node_modules
 test
