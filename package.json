@@ -4,7 +4,7 @@
     "email": "kyle@kemitchell.com",
     "url": "http://kemitchell.com/"
   },
-  "description": "plain-text markup for Common Form forms",
+  "description": "write form contracts in plain text",
   "devDependencies": {
     "chai": "^1.10.0",
     "commonform": "commonform/commonform-validate",
