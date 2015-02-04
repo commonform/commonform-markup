@@ -7,7 +7,7 @@
   "description": "plain-text markup for Common Form forms",
   "devDependencies": {
     "chai": "^1.10.0",
-    "commonform": "commonform/commonform-validation#0.0.1",
+    "commonform": "commonform/commonform-validate",
     "istanbul": "^0.3.5",
     "jscs": "^1.8.1",
     "jshint": "^2.5.10",
@@ -22,7 +22,6 @@
     "markup"
   ],
   "license": "Apache-2.0",
-  "main": "commonform-markup.js",
   "name": "commonform-markup",
   "repository": {
     "type": "git",

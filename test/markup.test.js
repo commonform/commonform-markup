@@ -1,6 +1,6 @@
 /* jshint node: true, mocha: true */
 var expect = require('chai').expect;
-var commonform = require('commonform-validation');
+var validate = require('commonform-validate');
 
 var markup = require('../');
 
@@ -106,7 +106,7 @@ describe('Markup', function() {
           var result = markup.parseMarkup(test.markup);
           expect(result)
             .to.eql({content: test.content});
-          expect(commonform.isForm(result))
+          expect(validate.form(result))
             .to.be.true();
         });
       });
@@ -115,14 +115,14 @@ describe('Markup', function() {
         var result = markup.parseMarkup(EXAMPLE_MARKUP);
         expect(result)
           .to.eql(EXAMPLE_PARSED);
-        expect(commonform.isForm(result))
+        expect(validate.form(result))
           .to.be.true();
       });
     });
 
     describe('outputs', function() {
       it('a real world example', function() {
-        expect(commonform.isForm(EXAMPLE_PARSED))
+        expect(validate.form(EXAMPLE_PARSED))
           .to.be.true();
         expect(markup.toMarkup(EXAMPLE_PARSED))
           .to.eql(EXAMPLE_MARKUP);
