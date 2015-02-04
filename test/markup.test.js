@@ -133,6 +133,39 @@ describe('Markup', function() {
           markup.toMarkup({content: [{invalid: 'input'}]});
         }).to.throw('Invalid form content');
       });
+
+      it('outputs conspicuous forms with bangs', function() {
+        expect(markup.toMarkup({
+          conspicuous: 'true',
+          content: [
+            {
+              summary: 'A',
+              form:{
+                conspicuous: 'true',
+                content: ['test']
+              }
+            },
+            {
+              form:{
+                content: ['test']
+              }
+            },
+            {
+              form:{
+                conspicuous: 'true',
+                content: ['test']
+              }
+            },
+            'continuing'
+          ]
+        })).to.eql([
+          '!! ',
+          'A !! test',
+          '\\\\ test',
+          '!! test',
+          'continuing'
+        ].join('\n'));
+      });
     });
   });
 

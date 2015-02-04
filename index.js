@@ -250,11 +250,11 @@ exports.toMarkup = (function() {
         return indent + '{' + value + '}';
       default:
         // TODO: Implement sub-form output
-        if (item.hasOwnProperty('summary')) {
-          return '\n' + indent +
-            (item.summary ?
-              (item.summary + (item.conspicuous ? ' !! ' : ' \\\\ ')) :
-              '') +
+        if (item.hasOwnProperty('form')) {
+          return indent +
+            (item.summary ? item.summary + ' ' : '') +
+            (item.form.conspicuous ? '!!' : '\\\\') +
+            ' ' +
             formToMarkup(item.form, depth + 1);
         } else {
           throw new Error('Invalid form content');
@@ -267,15 +267,23 @@ exports.toMarkup = (function() {
   };
 
   var formToMarkup = function formToMarkup(form, depth) {
-    depth = depth || 0;
-    return form.content.reduce(function(buffer, element) {
-        if (isString(element)) {
-          return buffer + element;
-        } else {
-          return buffer + forObject(element, depth);
-        }
-      }, '');
+    return form.content.reduce(function(buffer, element, index, array) {
+      if (
+        (index > 0 && array[index - 1].hasOwnProperty('form')) ||
+        element.hasOwnProperty('form')
+      ) {
+        buffer = buffer + '\n';
+      }
+      if (isString(element)) {
+        return buffer + element;
+      } else {
+        return buffer + forObject(element, depth);
+      }
+    }, '');
   };
 
-  return formToMarkup;
+  return function(form) {
+    return (form.conspicuous ? '!! ' : '') +
+      formToMarkup(form, 0);
+  };
 })();
