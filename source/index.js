@@ -1,5 +1,3 @@
-exports.version = '0.0.1';
-
 var isString = function(x) {
   return typeof x === 'string';
 };
@@ -289,3 +287,5 @@ exports.toMarkup = (function() {
       formToMarkup(form, 0);
   };
 })();
+
+exports.version = '0.1.0';
