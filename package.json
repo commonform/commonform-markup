@@ -7,6 +7,7 @@
   "description": "write form contracts in plain text",
   "devDependencies": {
     "chai": "^1.10.0",
+    "check-versions": "0.0.1",
     "commonform": "commonform/commonform-validate",
     "istanbul": "^0.3.5",
     "jscs": "^1.8.1",
@@ -28,10 +29,12 @@
     "url": "https://github.com/commonform/commonform-markup.js.git"
   },
   "scripts": {
-    "pre-commit": "npm run lint && npm run coverage",
-    "lint": "jshint index.js test && jscs index.js test/",
+    "check":"check-versions --check-module",
     "coverage": "istanbul cover _mocha -- --recursive && istanbul check-coverage coverage/coverage.json",
-    "test": "mocha --recursive"
+    "lint": "jshint index.js test && jscs index.js test/",
+    "pre-commit": "npm run lint && npm run check && npm run coverage",
+    "test": "mocha --recursive",
+    "travis-ci": "npm run pre-commit"
   },
   "version": "0.0.1"
 }

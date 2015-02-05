@@ -1,3 +1,5 @@
+exports.version = '0.0.1';
+
 var isString = function(x) {
   return typeof x === 'string';
 };
