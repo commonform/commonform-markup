@@ -23,6 +23,7 @@
     "markup"
   ],
   "license": "Apache-2.0",
+  "main": "source/index",
   "name": "commonform-markup",
   "repository": {
     "type": "git",
@@ -31,7 +32,7 @@
   "scripts": {
     "check":"check-versions --check-module",
     "coverage": "istanbul cover _mocha -- --recursive && istanbul check-coverage coverage/coverage.json",
-    "lint": "jshint index.js test && jscs index.js test/",
+    "lint": "jshint source test && jscs source test/",
     "pre-commit": "npm run lint && npm run check && npm run coverage",
     "test": "mocha --recursive",
     "travis-ci": "npm run pre-commit"
