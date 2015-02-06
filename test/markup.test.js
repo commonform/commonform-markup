@@ -164,7 +164,7 @@ describe('Markup', function() {
           '\\\\ test',
           '!! test',
           'continuing'
-        ].join('\n'));
+        ].join('\n\n'));
       });
     });
   });

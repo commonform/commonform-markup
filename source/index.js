@@ -241,13 +241,13 @@ exports.toMarkup = (function() {
     var indent = indentation(depth);
     switch (key) {
       case 'use':
-        return indent + '<' + value + '>';
+        return '<' + value + '>';
       case 'definition':
-        return indent + '""' + value + '""';
+        return '""' + value + '""';
       case 'field':
-        return indent + '[' + value + ']';
+        return '[' + value + ']';
       case 'reference':
-        return indent + '{' + value + '}';
+        return '{' + value + '}';
       default:
         // TODO: Implement sub-form output
         if (item.hasOwnProperty('form')) {
@@ -272,7 +272,7 @@ exports.toMarkup = (function() {
         (index > 0 && array[index - 1].hasOwnProperty('form')) ||
         element.hasOwnProperty('form')
       ) {
-        buffer = buffer + '\n';
+        buffer = buffer + '\n\n';
       }
       if (isString(element)) {
         return buffer + element;
