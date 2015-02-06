@@ -37,5 +37,5 @@
     "test": "mocha --recursive",
     "travis-ci": "npm run pre-commit"
   },
-  "version": "0.1.0"
+  "version": "0.1.1"
 }
