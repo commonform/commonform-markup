@@ -1,0 +1,3 @@
+--bail
+--inline-diffs
+--check-leaks

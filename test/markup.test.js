@@ -1,4 +1,5 @@
 /* jshint node: true, mocha: true */
+var Immutable = require('immutable');
 var expect = require('chai').expect;
 var validate = require('commonform-validate');
 
@@ -103,7 +104,7 @@ describe('Markup', function() {
 
       tests.forEach(function(test) {
         it(test.name, function() {
-          var result = markup.parseMarkup(test.markup);
+          var result = markup.parseMarkup(test.markup).toJS();
           expect(result)
             .to.eql({content: test.content});
           expect(validate.form(result))
@@ -112,7 +113,7 @@ describe('Markup', function() {
       });
 
       it('parses a real-world example', function() {
-        var result = markup.parseMarkup(EXAMPLE_MARKUP);
+        var result = markup.parseMarkup(EXAMPLE_MARKUP).toJS();
         expect(result)
           .to.eql(EXAMPLE_PARSED);
         expect(validate.form(result))
@@ -124,18 +125,20 @@ describe('Markup', function() {
       it('a real world example', function() {
         expect(validate.form(EXAMPLE_PARSED))
           .to.be.true();
-        expect(markup.toMarkup(EXAMPLE_PARSED))
+        expect(markup.toMarkup(Immutable.fromJS(EXAMPLE_PARSED)))
           .to.eql(EXAMPLE_MARKUP);
       });
 
       it('throws an error for invalid content', function() {
         expect(function() {
-          markup.toMarkup({content: [{invalid: 'input'}]});
+          markup.toMarkup(Immutable.fromJS({
+            content: [{invalid: 'input'}]}
+          ));
         }).to.throw('Invalid form content');
       });
 
       it('outputs conspicuous forms with bangs', function() {
-        expect(markup.toMarkup({
+        expect(markup.toMarkup(Immutable.fromJS({
           conspicuous: 'true',
           content: [
             {
@@ -158,7 +161,7 @@ describe('Markup', function() {
             },
             'continuing'
           ]
-        })).to.eql([
+        }))).to.eql([
           '!! ',
           'A !! test',
           '\\\\ test',
@@ -188,7 +191,8 @@ describe('Markup', function() {
     };
 
     it('round trips', function() {
-      expect(markup.parseLines(markup.toMarkup(form)))
+      var fromForm = markup.toMarkup(Immutable.fromJS(form));
+      expect(markup.parseLines(fromForm).toJS())
         .to.eql(form);
     });
   });
