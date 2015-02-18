@@ -1,7 +1,7 @@
 {
   "name": "commonform-markup",
   "description": "write form contracts in plain text",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "author": {
     "name": "Kyle E. Mitchell",
     "email": "kyle@kemitchell.com",
