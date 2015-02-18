@@ -1,5 +1,6 @@
 var Immutable = require('immutable');
 var Scanner = require('./scanner');
+
 var VALID_PROPERTY_CHARS = '[ !#-;=?-@A-Z\\^-`a-z|-~]';
 
 module.exports = (function() {

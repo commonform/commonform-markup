@@ -5,7 +5,7 @@ var markup = require('..');
 describe('line parsing', function() {
   it('parses a simple sub-form', function() {
     var input = 'Warranties \\\\ <Vendor> warrants its <Services>';
-    expect(markup.parseLines(input).toJS())
+    expect(markup.parse(input).toJS())
       .to.eql({
         content: [{
           summary: 'Warranties',
@@ -21,7 +21,7 @@ describe('line parsing', function() {
   it('ignores comment lines', function() {
     var input = 'Warranties \\\\ <Vendor> warrants its <Services>\n' +
       '  # This is a comment!';
-    expect(markup.parseLines(input).toJS())
+    expect(markup.parse(input).toJS())
       .to.eql({
         content: [{
           summary: 'Warranties',
@@ -36,7 +36,7 @@ describe('line parsing', function() {
 
   it('parses a sub-form without a summary', function() {
     var input = '\\\\ <Vendor> warrants its <Services>';
-    expect(markup.parseLines(input).toJS())
+    expect(markup.parse(input).toJS())
       .to.eql({
         content: [{
           form: {
@@ -53,7 +53,7 @@ describe('line parsing', function() {
       'Warranties \\\\ <Vendor> warrants its <Services>',
       'will be performed',
     ].join('\n');
-    expect(markup.parseLines(input).toJS())
+    expect(markup.parse(input).toJS())
       .to.eql({
         content: [{
           summary: 'Warranties',
@@ -72,7 +72,7 @@ describe('line parsing', function() {
       'Warranties \\\\ First',
       'Another \\\\ Second'
     ].join('\n');
-    expect(markup.parseLines(input).toJS())
+    expect(markup.parse(input).toJS())
       .to.eql({
         content: [
           {summary: 'Warranties', form: {content: ['First']}},
@@ -83,7 +83,7 @@ describe('line parsing', function() {
 
   it('throws an error for relvative over-indentation', function() {
     expect(function() {
-      markup.parseLines([
+      markup.parse([
         'First',
         '        Over-indented'
       ].join('\n'));
@@ -92,7 +92,7 @@ describe('line parsing', function() {
 
   it('throws an error for over-indentation of line 1', function() {
     expect(function() {
-      markup.parseLines([
+      markup.parse([
         '    First',
         'Second'
       ].join('\n'));
@@ -105,7 +105,7 @@ describe('line parsing', function() {
       '    continues on second line'
     ].join('\n');
     expect(function() {
-      markup.parseLines(input);
+      markup.parse(input);
     }).to.throw('Line 2 missing summary');
   });
 
@@ -114,7 +114,7 @@ describe('line parsing', function() {
       'First \\\\ Level 1',
       '    Second \\\\ Level 2'
     ].join('\n');
-    expect(markup.parseLines(input).toJS())
+    expect(markup.parse(input).toJS())
       .to.eql({
         content: [{
           summary: 'First',
@@ -133,7 +133,7 @@ describe('line parsing', function() {
       'Summary \\\\ Text content',
       'continues on second line'
     ].join('\n');
-    expect(markup.parseLines(input).toJS())
+    expect(markup.parse(input).toJS())
       .to.eql({
         content: [{
           summary: 'Summary',
@@ -147,7 +147,7 @@ describe('line parsing', function() {
       'Text content',
       'continues on second line'
     ].join('\n');
-    expect(markup.parseLines(input).toJS())
+    expect(markup.parse(input).toJS())
       .to.eql({content: ['Text content continues on second line']});
   });
 
@@ -155,7 +155,7 @@ describe('line parsing', function() {
     var input = [
       'Limitation of Liability !! This is important'
     ].join('\n');
-    expect(markup.parseLines(input).toJS())
+    expect(markup.parse(input).toJS())
       .to.eql({
         content: [{
           summary: 'Limitation of Liability',

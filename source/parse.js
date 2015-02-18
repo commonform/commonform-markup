@@ -2,7 +2,7 @@ var Immutable = require('immutable');
 
 var constants = require('./constants');
 var lastAtDepth = require('./last-at-depth');
-var parseMarkup = require('./parse-markup');
+var parseContent = require('./content');
 
 var ALL_SPACE = /^\s*$/;
 var COMMENT = /^\s*#.*$/;
@@ -11,7 +11,7 @@ var LINE_RE = /^( *)(.+)$/;
 var SUMMARY_SEP = /(\\\\|\!\!)/;
 
 module.exports = function(input) {
-  var form = input.split('\n')
+  return input.split('\n')
 
     // Tokenize lines with indentation attributes, discarding blanks.
     .reduce(function(tokens, line, number) {
@@ -46,9 +46,9 @@ module.exports = function(input) {
           if (summary.trim().length > 0) {
             element.set('summary', summary);
           }
-          element.set('form', parseMarkup(content.trim()));
+          element.set('form', parseContent(content.trim()));
         } else {
-          element.set('content', parseMarkup(string).get('content'));
+          element.set('content', parseContent(string).get('content'));
         }
       });
     })
@@ -80,6 +80,7 @@ module.exports = function(input) {
       if (element.has('form')) {
         parentKeyArray = lastAtDepth(form, depth);
         contentKeyArray = parentKeyArray.push('content');
+        // Create a new form object without parser-related metadata.
         newValue = Immutable.Map({
           form: element.get('form')
         }).withMutations(function(object) {
@@ -129,6 +130,4 @@ module.exports = function(input) {
         });
       }
     }, Immutable.fromJS({content: []}));
-
-  return Immutable.fromJS(form);
 };
