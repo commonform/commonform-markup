@@ -110,18 +110,20 @@ module.exports = function(input) {
         return form.updateIn(contentKeyArray, function(content) {
           var last = content.last();
           var head = newValue.first();
+          var length = content.count();
           // If the last existing content element is a string and the
           // next content element to be added is a string, concatenate
           // the strings.
           if (
-            last &&
+            length > 0 &&
             typeof head === 'string' &&
             typeof last === 'string'
           ) {
             return content.withMutations(function(content) {
-              var length = content.count();
-              content.set(length - 1, last + ' ' + newValue.first());
-              content.concat(newValue.slice(1));
+              content.set(length - 1, last + ' ' + head);
+              newValue.rest().forEach(function(element) {
+                content.push(element);
+              });
             });
           // Otherwise, concatenate the lists.
           } else {

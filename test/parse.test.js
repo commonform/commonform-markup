@@ -19,7 +19,7 @@ describe('line parsing', function() {
   });
 
   it('ignores comment lines', function() {
-    var input = 'Warranties \\\\ <Vendor> warrants its <Services>\n' +
+    var input = 'Warranties \\\\ See {Services}\n' +
       '  # This is a comment!';
     expect(markup.parse(input).toJS())
       .to.eql({
@@ -27,7 +27,7 @@ describe('line parsing', function() {
           summary: 'Warranties',
           form: {
             content: [
-              {use: 'Vendor'}, ' warrants its ', {use: 'Services'}
+              'See ', {reference: 'Services'}
             ]
           }
         }]
@@ -51,7 +51,7 @@ describe('line parsing', function() {
   it('concatenates subsequent content', function() {
     var input = [
       'Warranties \\\\ <Vendor> warrants its <Services>',
-      'will be performed',
+      'will be performed <Competently>',
     ].join('\n');
     expect(markup.parse(input).toJS())
       .to.eql({
@@ -60,7 +60,7 @@ describe('line parsing', function() {
           form: {
             content: [
               {use: 'Vendor'}, ' warrants its ', {use: 'Services'},
-              'will be performed'
+              'will be performed ', {use: 'Competently'}
             ]
           }
         }]
@@ -128,27 +128,18 @@ describe('line parsing', function() {
       });
   });
 
-  it('concatenates strings split across lines', function() {
-    var input = [
-      'Summary \\\\ Text content',
-      'continues on second line'
-    ].join('\n');
-    expect(markup.parse(input).toJS())
-      .to.eql({
-        content: [{
-          summary: 'Summary',
-          form: {content: ['Text content continues on second line']}
-        }]
-      });
-  });
-
   it('text only', function() {
     var input = [
       'Text content',
-      'continues on second line'
+      'continues on second line and <Uses>'
     ].join('\n');
     expect(markup.parse(input).toJS())
-      .to.eql({content: ['Text content continues on second line']});
+      .to.eql({
+        content: [
+          'Text content continues on second line and ',
+          {use: 'Uses'}
+        ]
+      });
   });
 
   it('conspicuous provisions', function() {
@@ -164,6 +155,63 @@ describe('line parsing', function() {
             content: ['This is important']
           }
         }]
+      });
+  });
+
+  it('nesting levels', function() {
+    var input = [
+      'Parent \\\\ Text',
+      '    SubForm \\\\ Text',
+      'Paragraph <Term>',
+    ].join('\n');
+    expect(markup.parse(input).toJS())
+      .to.eql({
+        content: [{
+          summary: 'Parent',
+          form: {
+            content: [
+              'Text',
+              {
+                summary: 'SubForm',
+                form: {
+                  content: ['Text']
+                }
+              },
+              'Paragraph ',
+              {use: 'Term'}
+            ]
+          }
+        }]
+      });
+  });
+
+  it('correctly concatenates paragraphs', function() {
+    var input = [
+      'P \\\\ A',
+      '    S \\\\ B',
+      'C{D}E'
+    ].join('\n');
+    expect(markup.parse(input).toJS())
+      .to.eql({
+        content: [
+          {
+            summary: 'P',
+            form: {
+              content: [
+                'A',
+                {
+                  summary: 'S',
+                  form: {
+                    content: ['B']
+                  }
+                },
+                'C',
+                {reference: 'D'},
+                'E'
+              ]
+            }
+          }
+        ]
       });
   });
 });
