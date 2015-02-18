@@ -1,10 +1,15 @@
 {
+  "name": "commonform-markup",
+  "description": "write form contracts in plain text",
+  "version": "0.1.1",
   "author": {
     "name": "Kyle E. Mitchell",
     "email": "kyle@kemitchell.com",
     "url": "http://kemitchell.com/"
   },
-  "description": "write form contracts in plain text",
+  "dependencies": {
+    "immutable": "^3.6.2"
+  },
   "devDependencies": {
     "chai": "^1.10.0",
     "check-versions": "0.0.1",
@@ -24,7 +29,6 @@
   ],
   "license": "Apache-2.0",
   "main": "source/index",
-  "name": "commonform-markup",
   "repository": {
     "type": "git",
     "url": "https://github.com/commonform/commonform-markup.js.git"
@@ -36,9 +40,5 @@
     "pre-commit": "npm run lint && npm run check && npm run coverage",
     "test": "mocha",
     "travis-ci": "npm run pre-commit"
-  },
-  "version": "0.1.1",
-  "dependencies": {
-    "immutable": "^3.6.2"
   }
 }
