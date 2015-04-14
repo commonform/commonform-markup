@@ -1,19 +1,16 @@
 {
   "name": "commonform-markup",
   "description": "write form contracts in plain text",
-  "version": "0.2.1",
+  "version": "1.0.0-rc1",
   "author": {
     "name": "Kyle E. Mitchell",
     "email": "kyle@kemitchell.com",
     "url": "http://kemitchell.com/"
   },
-  "dependencies": {
-    "immutable": "^3.6.2"
-  },
   "devDependencies": {
     "chai": "^1.10.0",
-    "check-versions": "0.0.1",
-    "commonform-validate": "0.1.x",
+    "check-versions": "1.x",
+    "commonform-validate": "1.x",
     "istanbul": "^0.3.5",
     "jscs": "^1.8.1",
     "jshint": "^2.5.10",
@@ -40,5 +37,9 @@
     "pre-commit": "npm run lint && npm run check && npm run coverage",
     "test": "mocha",
     "travis-ci": "npm run pre-commit"
+  },
+  "dependencies": {
+    "keyarray-get": "^0.1.0",
+    "last-index-matching": "^1.0.0-rc1"
   }
 }

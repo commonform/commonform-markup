@@ -1,31 +1,26 @@
-var Immutable = require('immutable');
 var constants = require('./constants');
-
-var isString = function(x) {
-  return typeof x === 'string';
-};
 
 module.exports = (function() {
   var forObject = function(item, depth) {
     depth = depth || 0;
-    var key = item.keySeq().first();
-    var value = item.get(key);
+    var key = Object.keys(item)[0];
+    var value = item[key];
     var indent = indentation(depth);
     switch (key) {
       case 'use':
         return '<' + value + '>';
       case 'definition':
         return '""' + value + '""';
-      case 'field':
+      case 'blank':
         return '[' + value + ']';
       case 'reference':
         return '{' + value + '}';
       default:
-        if (item.has('form')) {
-          var form = item.get('form');
+        if (item.hasOwnProperty('form')) {
+          var form = item.form;
           return indent +
-            (item.has('summary') ? item.get('summary') + ' ' : '') +
-            (form.has('conspicuous') ? '!!' : '\\\\') +
+            (item.hasOwnProperty('heading') ? item.heading + ' ' : '') +
+            (form.hasOwnProperty('conspicuous') ? '!!' : '\\\\') +
             ' ' +
             formToMarkup(form, depth + 1);
         } else {
@@ -39,15 +34,15 @@ module.exports = (function() {
   };
 
   var formToMarkup = function formToMarkup(form, depth) {
-    return form.get('content')
+    return form.content
       .reduce(function(buffer, element, index, array) {
         if (
-          (index > 0 && array.hasIn([index - 1, 'form'])) ||
-          (Immutable.Map.isMap(element) && element.has('form'))
+          (index > 0 && array[index - 1].hasOwnProperty('form')) ||
+          (element.hasOwnProperty('form'))
         ) {
           buffer = buffer + '\n\n';
         }
-        if (isString(element)) {
+        if (typeof element === 'string') {
           return buffer + element;
         } else {
           return buffer + forObject(element, depth);
@@ -56,7 +51,7 @@ module.exports = (function() {
   };
 
   return function(form) {
-    return (form.has('conspicuous') ? '!! ' : '') +
+    return (form.hasOwnProperty('conspicuous') ? '!! ' : '') +
       formToMarkup(form, 0);
   };
 })();

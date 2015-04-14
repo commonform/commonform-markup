@@ -1,4 +1,3 @@
-var Immutable = require('immutable');
 var Scanner = require('./scanner');
 
 var VALID_PROPERTY_CHARS = '[ !#-;=?-@A-Z\\^-`a-z|-~]';
@@ -24,7 +23,7 @@ module.exports = (function() {
       '"': 'definition',
       '<': 'use',
       '{': 'reference',
-      '[': 'field'
+      '[': 'blank'
     };
 
     return function(match) {
@@ -50,6 +49,6 @@ module.exports = (function() {
       }
       content.push(objectForMatch(match));
     }
-    return Immutable.fromJS({content: content});
+    return {content: content};
   };
 })();

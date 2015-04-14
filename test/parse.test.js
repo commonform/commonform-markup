@@ -5,47 +5,39 @@ var markup = require('..');
 describe('line parsing', function() {
   it('parses a simple sub-form', function() {
     var input = 'Warranties \\\\ <Vendor> warrants its <Services>';
-    expect(markup.parse(input).toJS())
+    expect(markup.parse(input))
       .to.eql({
         content: [{
-          summary: 'Warranties',
+          heading: 'Warranties',
           form: {
             content: [
-              {use: 'Vendor'}, ' warrants its ', {use: 'Services'}
-            ]
-          }
-        }]
-      });
+              {use: 'Vendor'},
+              ' warrants its ',
+              {use: 'Services'}]}}]});
   });
 
   it('ignores comment lines', function() {
     var input = 'Warranties \\\\ See {Services}\n' +
       '  # This is a comment!';
-    expect(markup.parse(input).toJS())
+    expect(markup.parse(input))
       .to.eql({
         content: [{
-          summary: 'Warranties',
+          heading: 'Warranties',
           form: {
             content: [
-              'See ', {reference: 'Services'}
-            ]
-          }
-        }]
-      });
+              'See ', {reference: 'Services'}]}}]});
   });
 
-  it('parses a sub-form without a summary', function() {
+  it('parses a sub-form without a heading', function() {
     var input = '\\\\ <Vendor> warrants its <Services>';
-    expect(markup.parse(input).toJS())
+    expect(markup.parse(input))
       .to.eql({
         content: [{
           form: {
             content: [
-              {use: 'Vendor'}, ' warrants its ', {use: 'Services'}
-            ]
-          }
-        }]
-      });
+              {use: 'Vendor'},
+              ' warrants its ',
+              {use: 'Services'}]}}]});
   });
 
   it('concatenates subsequent content', function() {
@@ -53,18 +45,17 @@ describe('line parsing', function() {
       'Warranties \\\\ <Vendor> warrants its <Services>',
       'will be performed <Competently>',
     ].join('\n');
-    expect(markup.parse(input).toJS())
+    expect(markup.parse(input))
       .to.eql({
         content: [{
-          summary: 'Warranties',
+          heading: 'Warranties',
           form: {
             content: [
-              {use: 'Vendor'}, ' warrants its ', {use: 'Services'},
-              'will be performed ', {use: 'Competently'}
-            ]
-          }
-        }]
-      });
+              {use: 'Vendor'},
+              ' warrants its ',
+              {use: 'Services'},
+              'will be performed ',
+              {use: 'Competently'}]}}]});
   });
 
   it('identifies contiguous sub-forms', function() {
@@ -72,13 +63,11 @@ describe('line parsing', function() {
       'Warranties \\\\ First',
       'Another \\\\ Second'
     ].join('\n');
-    expect(markup.parse(input).toJS())
+    expect(markup.parse(input))
       .to.eql({
         content: [
-          {summary: 'Warranties', form: {content: ['First']}},
-          {summary: 'Another', form: {content: ['Second']}}
-        ]
-      });
+          {heading: 'Warranties', form: {content: ['First']}},
+          {heading: 'Another', form: {content: ['Second']}}]});
   });
 
   it('throws an error for relvative over-indentation', function() {
@@ -99,14 +88,14 @@ describe('line parsing', function() {
     }).to.throw('Line 1 indented too far');
   });
 
-  it('throws an error re sub-form w/o summary', function() {
+  it('throws an error re sub-form w/o heading', function() {
     var input = [
-      'Summary \\\\ Text content',
+      'heading \\\\ Text content',
       '    continues on second line'
     ].join('\n');
     expect(function() {
       markup.parse(input);
-    }).to.throw('Line 2 missing summary');
+    }).to.throw('Line 2 missing heading');
   });
 
   it('nested sub-forms', function() {
@@ -114,18 +103,17 @@ describe('line parsing', function() {
       'First \\\\ Level 1',
       '    Second \\\\ Level 2'
     ].join('\n');
-    expect(markup.parse(input).toJS())
+    expect(markup.parse(input))
       .to.eql({
         content: [{
-          summary: 'First',
+          heading: 'First',
           form: {
             content: [
               'Level 1',
-              {summary: 'Second', form: {content: ['Level 2']}}
-            ]
-          }
-        }]
-      });
+              {
+                heading: 'Second',
+                form: {
+                  content: ['Level 2']}}]}}]});
   });
 
   it('text only', function() {
@@ -133,29 +121,24 @@ describe('line parsing', function() {
       'Text content',
       'continues on second line and <Uses>'
     ].join('\n');
-    expect(markup.parse(input).toJS())
+    expect(markup.parse(input))
       .to.eql({
         content: [
           'Text content continues on second line and ',
-          {use: 'Uses'}
-        ]
-      });
+          {use: 'Uses'}]});
   });
 
   it('conspicuous provisions', function() {
     var input = [
       'Limitation of Liability !! This is important'
     ].join('\n');
-    expect(markup.parse(input).toJS())
+    expect(markup.parse(input))
       .to.eql({
         content: [{
-          summary: 'Limitation of Liability',
+          heading: 'Limitation of Liability',
           form: {
-            conspicuous: 'true',
-            content: ['This is important']
-          }
-        }]
-      });
+            conspicuous: 'yes',
+            content: ['This is important']}}]});
   });
 
   it('nesting levels', function() {
@@ -164,25 +147,19 @@ describe('line parsing', function() {
       '    SubForm \\\\ Text',
       'Paragraph <Term>',
     ].join('\n');
-    expect(markup.parse(input).toJS())
+    expect(markup.parse(input))
       .to.eql({
         content: [{
-          summary: 'Parent',
+          heading: 'Parent',
           form: {
             content: [
               'Text',
               {
-                summary: 'SubForm',
+                heading: 'SubForm',
                 form: {
-                  content: ['Text']
-                }
-              },
+                  content: ['Text']}},
               'Paragraph ',
-              {use: 'Term'}
-            ]
-          }
-        }]
-      });
+              {use: 'Term'}]}}]});
   });
 
   it('correctly concatenates paragraphs', function() {
@@ -191,27 +168,20 @@ describe('line parsing', function() {
       '    S \\\\ B',
       'C{D}E'
     ].join('\n');
-    expect(markup.parse(input).toJS())
+    expect(markup.parse(input))
       .to.eql({
         content: [
           {
-            summary: 'P',
+            heading: 'P',
             form: {
               content: [
                 'A',
                 {
-                  summary: 'S',
+                  heading: 'S',
                   form: {
-                    content: ['B']
-                  }
-                },
+                    content: ['B']}},
                 'C',
                 {reference: 'D'},
-                'E'
-              ]
-            }
-          }
-        ]
-      });
+                'E']}}]});
   });
 });

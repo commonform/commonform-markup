@@ -1,5 +1,5 @@
-var Immutable = require('immutable');
-var emptyList = Immutable.List();
+var get = require('keyarray-get');
+var last = require('last-index-matching');
 
 // Given an immutable, nested form and a depth, return the last sub-form
 // at that depth within the form.
@@ -7,17 +7,15 @@ var lastAtDepth = function recurse(context, depth, keyArray) {
   if (depth === 0) {
     return keyArray;
   } else {
-    var lastFormIndex = context.get('content')
-      .findLastIndex(function(element) {
-        return Immutable.Map.isMap(element) &&
-          element.has('form');
-      });
+    var lastFormIndex = last(context.content, function(element) {
+      return element.hasOwnProperty('form');
+    });
     if (lastFormIndex === -1) {
       throw new Error('No form at the given depth');
     }
     var additionalKeys = ['content', lastFormIndex, 'form'];
     return recurse(
-      context.getIn(additionalKeys),
+      get(context, additionalKeys),
       depth - 1,
       keyArray.concat(additionalKeys)
     );
@@ -25,5 +23,5 @@ var lastAtDepth = function recurse(context, depth, keyArray) {
 };
 
 module.exports = function(context, depth) {
-  return lastAtDepth(context, depth, emptyList);
+  return lastAtDepth(context, depth, []);
 };

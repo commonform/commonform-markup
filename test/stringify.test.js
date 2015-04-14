@@ -1,5 +1,4 @@
 /* jshint node: true, mocha: true */
-var Immutable = require('immutable');
 var expect = require('chai').expect;
 var validate = require('commonform-validate');
 
@@ -37,7 +36,7 @@ describe('stringify', function() {
       ' agrees, severally and not jointly, to purchase from the ',
       {use: 'Company'},
       ', at the ',
-      {field: 'Purchase Price'},
+      {blank: 'Purchase Price'},
       ', the respective principal amounts of the ',
       {use: 'Securities'},
       ' set forth opposite each respective ',
@@ -69,9 +68,7 @@ describe('stringify', function() {
       {use: 'Delayed Delivery Contracts'},
       ' as hereinafter provided are herein called ',
       {definition: 'Contract Securities'},
-      '.'
-    ]
-  };
+      '.']};
 
   describe('form markup', function() {
     describe('parses', function() {
@@ -79,89 +76,78 @@ describe('stringify', function() {
         {
           name: 'simple text',
           markup: 'This is a test',
-          content: ['This is a test']
-        }, {
+          content: ['This is a test']},
+        {
           name: 'term uses',
           markup: 'This <Agreement> is a test',
-          content: ['This ', {use: 'Agreement'}, ' is a test']
-        }, {
+          content: ['This ', {use: 'Agreement'}, ' is a test']},
+        {
           name: 'term definitions',
           markup: 'This ""Agreement"" is a test',
-          content: ['This ', {definition: 'Agreement'}, ' is a test']
-        }, {
+          content: ['This ', {definition: 'Agreement'}, ' is a test']},
+        {
           name: 'cross references',
           markup: '{Indemnification} survives termination',
           content: [
             {reference: 'Indemnification'},
-            ' survives termination'
-          ]
-        }, {
-          name: 'fields',
+            ' survives termination']},
+        {
+          name: 'blanks',
           markup: '[Company] warrants',
-          content: [{field: 'Company'}, ' warrants']
-        }
-      ];
+          content: [{blank: 'Company'}, ' warrants']}];
 
       tests.forEach(function(test) {
         it(test.name, function() {
-          var result = markup.parse(test.markup).toJS();
+          var result = markup.parse(test.markup);
           expect(result)
             .to.eql({content: test.content});
           expect(validate.form(result))
-            .to.be.true();
+            .to.equal(true);
         });
       });
 
       it('parses a real-world example', function() {
-        var result = markup.parse(EXAMPLE_MARKUP).toJS();
+        var result = markup.parse(EXAMPLE_MARKUP);
         expect(result)
           .to.eql(EXAMPLE_PARSED);
         expect(validate.form(result))
-          .to.be.true();
+          .to.equal(true);
       });
     });
 
     describe('outputs', function() {
       it('a real world example', function() {
         expect(validate.form(EXAMPLE_PARSED))
-          .to.be.true();
-        expect(markup.stringify(Immutable.fromJS(EXAMPLE_PARSED)))
+          .to.equal(true);
+        expect(markup.stringify(EXAMPLE_PARSED))
           .to.eql(EXAMPLE_MARKUP);
       });
 
       it('throws an error for invalid content', function() {
         expect(function() {
-          markup.stringify(Immutable.fromJS({
-            content: [{invalid: 'input'}]}
-          ));
+          markup.stringify({
+            content: [{invalid: 'input'}]});
         }).to.throw('Invalid form content');
       });
 
       it('outputs conspicuous forms with bangs', function() {
-        expect(markup.stringify(Immutable.fromJS({
-          conspicuous: 'true',
+        expect(markup.stringify({
+          conspicuous: 'yes',
           content: [
             {
-              summary: 'A',
+              heading: 'A',
               form:{
-                conspicuous: 'true',
-                content: ['test']
-              }
-            },
+                conspicuous: 'yes',
+                content: ['test']}},
             {
               form:{
-                content: ['test']
-              }
-            },
+                content: ['test']}},
             {
               form:{
-                conspicuous: 'true',
-                content: ['test']
-              }
-            },
-            'continuing'
-          ]
-        }))).to.eql([
+                conspicuous: 'yes',
+                content: ['test']}},
+            'continuing']
+        })).to.eql([
           '!! ',
           'A !! test',
           '\\\\ test',
@@ -176,23 +162,18 @@ describe('stringify', function() {
     var form = {
       content: [
         {
-          summary: 'First',
-          form: {content: ['A']}
-        }, {
-          summary: 'Second',
+          heading: 'First',
+          form: {content: ['A']}},
+        {
+          heading: 'Second',
           form: {
             content: [{
-              summary: 'Third',
-              form: {content: ['A']}
-            }]
-          }
-        }
-      ]
-    };
+              heading: 'Third',
+              form: {content: ['A']}}]}}]};
 
     it('round trips', function() {
-      var fromForm = markup.stringify(Immutable.fromJS(form));
-      expect(markup.parse(fromForm).toJS())
+      var fromForm = markup.stringify(form);
+      expect(markup.parse(fromForm))
         .to.eql(form);
     });
   });

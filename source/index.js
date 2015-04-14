@@ -1,4 +1,4 @@
 exports.parse = require('./parse');
 exports.stringify = require('./stringify');
 
-exports.version = '0.2.1';
+exports.version = '1.0.0-rc1';
