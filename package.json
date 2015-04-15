@@ -2,21 +2,21 @@
   "name": "commonform-markup",
   "description": "write form contracts in plain text",
   "version": "1.0.0-rc1",
-  "author": {
-    "name": "Kyle E. Mitchell",
-    "email": "kyle@kemitchell.com",
-    "url": "http://kemitchell.com/"
+  "author": "Kyle E. Mitchell <kyle@kemitchell.com> (http://kemitchell.com)",
+  "dependencies": {
+    "keyarray-get": "^0.1.0",
+    "last-index-matching": "^1.0.0"
   },
   "devDependencies": {
-    "chai": "^1.10.0",
-    "check-versions": "1.x",
-    "commonform-validate": "1.x",
+    "chai": "^2.2.0",
+    "check-versions": "^1.0.0",
+    "commonform-validate": "^0.4.0",
     "istanbul": "^0.3.5",
     "jscs": "^1.8.1",
     "jshint": "^2.5.10",
     "mocha": "^2.0.1"
   },
-  "homepage": "https://github.com/commonform/commonform-markup.js",
+  "homepage": "https://commonform.github.io",
   "keywords": [
     "contracts",
     "document assembly",
@@ -26,20 +26,13 @@
   ],
   "license": "Apache-2.0",
   "main": "source/index",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/commonform/commonform-markup.js.git"
-  },
+  "repository": "commonform/commonform-markup",
   "scripts": {
     "check": "check-versions --check-module",
     "coverage": "istanbul cover _mocha && istanbul check-coverage coverage/coverage.json",
-    "lint": "jshint source test && jscs source test/",
+    "lint": "jshint source test && jscs source test",
     "pre-commit": "npm run lint && npm run check && npm run coverage",
     "test": "mocha",
     "travis-ci": "npm run pre-commit"
-  },
-  "dependencies": {
-    "keyarray-get": "^0.1.0",
-    "last-index-matching": "^1.0.0-rc1"
   }
 }
