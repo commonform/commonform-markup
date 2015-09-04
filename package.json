@@ -23,7 +23,6 @@
     "markup"
   ],
   "license": "Apache-2.0",
-  "main": "source/index",
   "repository": "commonform/commonform-markup",
   "scripts": {
     "test": "defence -i javascript README.md | replace-require-self | node"
