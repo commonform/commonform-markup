@@ -5,8 +5,7 @@
   "author": "Kyle E. Mitchell <kyle@kemitchell.com> (http://kemitchell.com)",
   "bugs": "https://github.com/commonform/commonform-markup/issues",
   "dependencies": {
-    "keyarray-get": "^0.1.0",
-    "last-index-matching": "^1.0.0"
+    "commonform-markup-parse": "~0.1.0"
   },
   "devDependencies": {
     "commonform-markup-tests": "^0.1.0",
