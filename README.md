@@ -31,30 +31,6 @@ Each provision of the form begins with `\\`. If the provision has a heading, it 
 
 Within a provision, defined terms are set in `""double quotation marks""` and uses of defined terms are typed `<within angle brackets>`. A cross-reference to a provision with a `{Particular Heading}` is with braces. `[Blanks to be filled in]` use square brackets.
 
-# Module
+# The Module
 
-```javascript
-var markup = require('commonform-markup')
-var assert = require('assert')
-```
-
-The parser passes [commonform-markup-tests](https://npmjs.com/packages/commonform-markup-tests)' suite:
-
-```javascript
-require('commonform-markup-tests')
-  .forEach(function(test, number) {
-    if (test.error) {
-      assert.throws(
-        function() { markup.parse(test.markup) },
-        test.error,
-        'No. ' + number + ': ' + test.comment) }
-    else {
-      assert.deepEqual(
-        markup.parse(test.markup),
-        test.form,
-        'No. ' + number + ': ' + test.comment)
-      assert.deepEqual(
-        markup.parse(markup.stringify(markup.parse(test.markup))),
-        test.form,
-        'No. ' + number + ': ' + test.comment) } })
-```
+`.parse` and `.stingify` pass the [commonform-markup-tests](https://npmjs.com/packages/commonform-markup-tests) suite.
