@@ -1,7 +1,7 @@
 {
   "name": "commonform-markup",
   "description": "write form contracts in plain text",
-  "version": "0.4.2",
+  "version": "0.4.3",
   "author": "Kyle E. Mitchell <kyle@kemitchell.com> (http://kemitchell.com)",
   "bugs": "https://github.com/commonform/commonform-markup/issues",
   "dependencies": {
