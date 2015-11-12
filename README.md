@@ -1,3 +1,5 @@
+***[commonform-markup-parse](https://www.npmjs.com/packages/commonform-markup-parse) supersedes this package. New development is focused on that package.***
+
 # Typing Guide
 
 Common Form markup utilizes rarely-used symbols you can type with your keyboard to structure agreements and indicate definitions, uses of defined terms, fill-in-the-blanks, and cross-references between provisions. For example:
